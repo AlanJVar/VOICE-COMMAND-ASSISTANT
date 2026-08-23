@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Shopping Assistant</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 15px; background: #f8f9fa; }
+    .card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .auth-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .auth-btn { background: #343a40; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+    .mic-btn { background: #007bff; color: white; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+    .status { font-size: 0.85rem; color: #666; margin-top: 8px; text-align: center; }
+    ul { list-style: none; padding: 0; }
+    li { background: #f1f3f5; padding: 10px; margin-top: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .delete-btn { background: #ff4d4f; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+    .confirm-box { background: #e7f5ff; border: 1px solid #74c0fc; padding: 12px; border-radius: 6px; display: none; margin-top: 10px; }
+    .confirm-btns { display: flex; gap: 10px; margin-top: 8px; }
+    .btn-yes { background: #2b8a3e; color: white; border: none; padding: 8px 12px; border-radius: 4px; flex: 1; cursor: pointer; }
+    .btn-no { background: #868e96; color: white; border: none; padding: 8px 12px; border-radius: 4px; flex: 1; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="card auth-header">
+    <span id="userStatus" style="font-size:0.85rem; font-weight:bold;">Checking login...</span>
+    <button id="authBtn" class="auth-btn">Log In</button>
+  </div>
+
+  <h2>🛒 Voice Shopping List</h2>
+
+  <div class="card">
+    <select id="langSelect" style="width:100%; padding:8px; margin-bottom:10px;">
+      <option value="en-US">English (US)</option>
+      <option value="es-ES">Spanish (Español)</option>
+    </select>
+    <button id="speakBtn" class="mic-btn">🎤 Speak Command</button>
+    <div id="status" class="status">Tap mic and state an item...</div>
+
+    <div id="confirmPrompt" class="confirm-box">
+      <div id="promptText" style="font-weight:bold; font-size:0.9rem;"></div>
+      <div class="confirm-btns">
+        <button id="acceptBtn" class="btn-yes">Yes, Swap Item</button>
+        <button id="rejectBtn" class="btn-no">No, Keep Original</button>
+      </div>
+      <small style="display:block; margin-top:5px; color:#555;">Or click mic and say "Yes" or "No"</small>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>💡 Smart Suggestions</h3>
+    <div id="suggestions">Loading suggestions...</div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Shopping List</h3>
+    <ul id="shoppingList"></ul>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
