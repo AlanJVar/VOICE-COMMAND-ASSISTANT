@@ -8,7 +8,12 @@ app = FastAPI(title="Voice Shopping Assistant API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://voice-command-shopping-cfb9a.web.app",
+        "https://voice-command-shopping-cfb9a.firebaseapp.com",
+        "http://localhost:5000",
+        "http://127.0.0.1:5500"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
