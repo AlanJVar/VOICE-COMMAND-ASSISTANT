@@ -31,7 +31,7 @@ const firebaseConfig = {
   appId: "1:421055758523:web:f1cb583e0bb5fdff8c699e"
 };
 
-const PYTHON_API_URL = "http://127.0.0.1:8000";
+const PYTHON_API_URL = "https://voice-command-assistant.onrender.com/";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
