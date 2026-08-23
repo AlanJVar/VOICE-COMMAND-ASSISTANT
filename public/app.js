@@ -31,7 +31,7 @@ const firebaseConfig = {
   appId: "1:421055758523:web:f1cb583e0bb5fdff8c699e"
 };
 
-const PYTHON_API_URL = "https://voice-command-assistant.onrender.com/";
+const PYTHON_API_URL = "https://voice-command-assistant.onrender.com";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -41,7 +41,7 @@ let currentUser = null;
 let pendingItemData = null;
 let unsubscribeList = null;
 
-// User Authentication State Listener
+// Auth State Listener - purely handles UI state updates
 onAuthStateChanged(auth, (user) => {
   const authBtn = document.getElementById('authBtn');
   const userStatus = document.getElementById('userStatus');
@@ -61,7 +61,24 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Real-Time List Listener per User
+// Single Auth Button Listener
+document.getElementById('authBtn').addEventListener('click', async () => {
+  if (currentUser) {
+    await signOut(auth);
+  } else {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        console.error("Sign-in error:", err);
+      }
+    }
+  }
+});
+
+// Real-Time List Listener
 function listenToUserList() {
   if (!currentUser) return;
   if (unsubscribeList) unsubscribeList();
@@ -71,6 +88,7 @@ function listenToUserList() {
 
   unsubscribeList = onSnapshot(q, (snapshot) => {
     const listElement = document.getElementById('shoppingList');
+    if (!listElement) return;
     listElement.innerHTML = '';
     
     if (snapshot.empty) {
@@ -99,11 +117,12 @@ function listenToUserList() {
         const itemName = e.target.getAttribute('data-name');
         const itemCat = e.target.getAttribute('data-cat');
         
-        // Archive to purchase history and remove from active list
         await archivePurchase(itemName, itemCat);
         await deleteDoc(doc(db, "users", currentUser.uid, "shopping_lists", docId));
       });
     });
+  }, (err) => {
+    console.error("Firestore error:", err);
   });
 }
 
@@ -129,7 +148,6 @@ function hideConfirmationUI() {
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 }
 
-// Archive bought items to user's history
 async function archivePurchase(itemName, category) {
   if (!currentUser) return;
   const historyRef = doc(db, "users", currentUser.uid, "purchase_history", itemName.toLowerCase());
@@ -140,7 +158,6 @@ async function archivePurchase(itemName, category) {
   }, { merge: true });
 }
 
-// Save active items to user's list
 async function saveToFirestore(itemData) {
   if (!currentUser) {
     alert("Please log in first to save items!");
@@ -260,16 +277,6 @@ if (SpeechRecognition) {
     }
   };
 }
-
-// Auth Button Event
-document.getElementById('authBtn').addEventListener('click', () => {
-  if (currentUser) {
-    signOut(auth);
-  } else {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider);
-  }
-});
 
 // UI Buttons for Suggestions
 document.getElementById('acceptBtn').addEventListener('click', async () => {
